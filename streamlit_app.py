@@ -10,6 +10,12 @@ cache_session = requests_cache.CachedSession('.cache', expire_after = 3600)
 retry_session = retry(cache_session, retries = 5, backoff_factor = 0.2)
 openmeteo = openmeteo_requests.Client(session = retry_session)
 
+now = pd.Timestamp.now(tz = "UTC").strftime("%Y-%m-%d")
+pre2days = (pd.Timestamp.now(tz = "UTC") - pd.Timedelta(days = 2)).strftime("%Y-%m-%d")	
+post12days = (pd.Timestamp.now(tz = "UTC") + pd.Timedelta(days = 12)).strftime("%Y-%m-%d")
+st.write(f"Starting data from {pre2days} - {post12days}")
+
+
 # Make sure all required weather variables are listed here
 # The order of variables in hourly or daily is important to assign them correctly below
 url = "https://api.open-meteo.com/v1/forecast"
@@ -18,8 +24,8 @@ params = {
 	"longitude": [8.699],
 	"hourly": "wind_speed_120m",
 	"wind_speed_unit": "ms",
-	"start_date": "2025-02-08",
-	"end_date": "2025-02-23"
+	"start_date": pre2days,
+	"end_date": post12days
 }
 
 st.title("🎈 Open Meteo Test")
